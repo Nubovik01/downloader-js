@@ -6,16 +6,20 @@ var https = require('https');
 let count = 0, maxCount = 115;
 
 async function downloadImage(number) {
-   Axios({
+  // making a request to the server to get the image
+   await Axios({
     url: 'https://*****.live/assets/' + number + '.jpg',
     method: 'GET',
     responseType: 'stream',
+    // disable SSL certificate verification
     httpsAgent: new https.Agent({
       rejectUnauthorized: false
     })
   }).then(result => {
+    // saving images to "downloaded-content" folder
     result.data.pipe(createWriteStream(resolve(__dirname, 'downloaded-content', number + '.jpg')));
   }).catch(error => {
+    // if the script was unable to download or get access the file
     console.error('maybe file [n=%s] is not found? http code: %s 🙃 🤭 🤭 🤭 🤭', number, error.response.status);
   });
 };
