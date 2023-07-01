@@ -3,12 +3,12 @@ var {resolve} = require('path');
 var Axios = require('axios');
 var https = require('https');
 
-let count = 0, maxCount = 115;
+let count = 0, maxCount = 150;
 
 async function downloadImage(number) {
   // making a request to the server to get the image
    await Axios({
-    url: 'https://*****.live/assets/' + number + '.jpg',
+    url: 'https://*****.live/img/' + number, //+'.jpg',
     method: 'GET',
     responseType: 'stream',
     // disable SSL certificate verification
