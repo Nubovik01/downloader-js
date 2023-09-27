@@ -1,10 +1,11 @@
-var {createWriteStream} = require('fs');
-var {resolve} = require('path');
-var Axios = require('axios');
-var https = require('https');
+const Axios = require('axios');
+const { createWriteStream } = require('fs');
+const { Agent } = require('https');
+const { resolve } = require('path');
 
-let count = 0, maxCount = 150;
+let numberOfPhoto = 0, countOfImagesOnTheServer = 150;
 
+// async function declaration
 async function downloadImage(number) {
   // making a request to the server to get the image
    await Axios({
@@ -12,18 +13,25 @@ async function downloadImage(number) {
     method: 'GET',
     responseType: 'stream',
     // disable SSL certificate verification
-    httpsAgent: new https.Agent({
+    httpsAgent: new Agent({
       rejectUnauthorized: false
     })
   }).then(result => {
     // saving images to "downloaded-content" folder
     result.data.pipe(createWriteStream(resolve(__dirname, 'downloaded-content', number + '.jpg')));
   }).catch(error => {
-    // if the script was unable to download or get access the file
-    console.error('maybe file [n=%s] is not found? http code: %s 🙃 🤭 🤭 🤭 🤭', number, error.response.status);
+    // checking if a response from server is received
+    if(error.response) {
+      // if the script was unable to download or get access the file but received response from server
+      console.error('maybe file [n=%s] is not found? http code: %s 🙃 🤭 🤭 🤭 🤭', number, error.response.status);
+    } else {
+      // else response from server is not received
+      console.error('maybe this resource does not exists?');
+    };
   });
 };
 
-while (++count <= maxCount) {
-  downloadImage(count);
+// loop this N times until all photos are downloaded
+while (++numberOfPhoto <= countOfImagesOnTheServer) {
+  downloadImage(numberOfPhoto);
 };
